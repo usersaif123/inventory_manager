@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Item</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .confirm-container {
+            background-color: #ffffff;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #374151;
+            margin-bottom: 2rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        button[type="submit"] {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #b91c1c;
+        }
+
+        .cancel-button {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .cancel-button:hover {
+            background-color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+
+<div class="confirm-container">
+    <h1>Delete Item</h1>
+    <p>Are you sure you want to delete "<strong>{{ item.name }}</strong>"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="button-group">
+            <button type="submit">🗑️ Yes, Delete</button>
+            <a href="{% url 'item_list' %}" class="cancel-button">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+.env
+
+# VSCode/Cursor
+.vscode/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+
+# Logs
+*.log
+
+# Mac
+*.DS_Store
+
+# Windows
+ehthumbs.db
+Icon?

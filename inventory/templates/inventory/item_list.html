@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inventory Shop</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <style>
+        body {
+            background: #f6f8fa;
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-header {
+            background: linear-gradient(90deg, #757575 0%, #bdbdbd 100%);
+        }
+        .search-bar {
+            background: #fff;
+            border-radius: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 1rem 2rem;
+        }
+        .card {
+            border: none;
+            border-radius: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        .card-img-top {
+            border-radius: 1.2rem 1.2rem 0 0;
+            object-fit: cover;
+            height: 200px;
+        }
+        .btn {
+            border-radius: 2rem;
+        }
+        .btn-success {
+            background: linear-gradient(90deg, #28a745 0%, #218838 100%);
+            border: none;
+        }
+        .btn-warning {
+            background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+            border: none;
+            color: #212529;
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #dc3545 0%, #b71c1c 100%);
+            border: none;
+        }
+        .footer-social a {
+            color: #fff;
+            margin: 0 0.5rem;
+            font-size: 1.3rem;
+            transition: color 0.2s;
+        }
+        .footer-social a:hover {
+            color: #ffc107;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark gradient-header shadow-sm">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand fw-bold" href="#">Inventory Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'item_list' %}">Home</a></li>
+                </ul>
+                <form class="d-flex" action="{% url 'cart_view' %}">
+                    <button class="btn btn-light btn-sm px-3 fw-semibold" type="submit">
+                        <i class="bi bi-cart3"></i> My Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-header py-5 mb-4">
+        <div class="container text-center text-white">
+            <h1 class="display-4 fw-bolder mb-2">Tech Items Gallery</h1>
+            <p class="lead text-white-50 mb-0">Manage, filter, and purchase items with ease</p>
+        </div>
+    </header>
+
+    <!-- Search & Filter -->
+    <section class="py-2">
+        <div class="container">
+            <div class="search-bar d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 shadow">
+                <form method="get" class="d-flex flex-wrap gap-2 align-items-center mb-0 w-100 w-md-auto">
+                    <input type="text" name="q" class="form-control rounded-pill" style="max-width:180px;" placeholder="🔍 Search by name" value="{{ query }}">
+                    <select name="category" class="form-select rounded-pill" style="max-width:160px;">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Search</button>
+                    {% if query %}
+                        <a href="{% url 'item_list' %}" class="btn btn-outline-danger rounded-pill px-3">❌ Clear</a>
+                    {% endif %}
+                </form>
+                {% if perms.inventory.add_item %}
+                    <a href="{% url 'item_add' %}" class="btn btn-success rounded-pill px-4">➕ Add New Item</a>
+                {% endif %}
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} shadow-sm">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Items -->
+    <section class="py-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for item in items %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                            {% else %}
+                                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height:200px;">
+                                    <i class="bi bi-image text-secondary" style="font-size:3rem;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title fw-semibold">{{ item.name }}</h5>
+                                <p class="card-text text-muted">{{ item.description|truncatewords:20 }}</p>
+                                <ul class="list-unstyled small mb-2">
+                                    <li><strong>Category:</strong> {{ item.category.name }}</li>
+                                    <li><strong>Quantity:</strong> {{ item.quantity }}</li>
+                                    <li><strong>Price:</strong> ${{ item.price }}</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-flex flex-wrap gap-2 justify-content-between">
+                                <a href="{% url 'item_edit' item.pk %}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                                <a href="{% url 'item_delete' item.pk %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</a>
+                                <form method="post" action="{% url 'purchase_item' item.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-bag-check"></i> Purchase</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center">No items found.</p>
+                {% endfor %}
+            </div>
+            <nav aria-label="Page navigation" class="mt-4">
+              <ul class="pagination justify-content-center">
+                {% if items.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ items.previous_page_number }}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                  </li>
+                {% endif %}
+
+                {% for num in items.paginator.page_range %}
+                  {% if items.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                  {% elif num > items.number|add:'-3' and num < items.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+                  {% endif %}
+                {% endfor %}
+
+                {% if items.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ items.next_page_number }}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4 gradient-header text-white text-center mt-5">
+        <div class="container">
+            <div class="footer-social mb-2">
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-twitter-x"></i></a>
+                <a href="#"><i class="bi bi-github"></i></a>
+            </div>
+            Inventory Manager © {{ now|date:"Y" }}
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>
