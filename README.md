@@ -12,6 +12,8 @@ A modern Django web application for managing and purchasing tech inventory items
 - Checkout process with order saving
 - Pagination for item lists
 - Admin panel for advanced management
+- stripe service api for paiment
+- 
 
 ## Screenshots
 <!-- Add screenshots here -->
@@ -60,6 +62,6 @@ A modern Django web application for managing and purchasing tech inventory items
 ## Tech Stack
 - **Backend:** Django (Python)
 - **Frontend:** Bootstrap 5, HTML5, CSS3
-- **Other:** Django Widget Tweaks, Pillow (for images)
+- **Other:** Django Widget Tweaks, Pillow (for images) , stripe (for paiment)
 
 
